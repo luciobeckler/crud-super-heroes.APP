@@ -1,0 +1,7 @@
+{
+  "name": "crud-super-heores.APP",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

@@ -98,7 +98,7 @@
               [buttons]="alertButtons"
               (didDismiss)="setResult($event, heroi)"
             ></ion-alert>
-            <ion-button color="warning" (click)="updateHeroi()">
+            <ion-button color="warning" (click)="updateHeroi(heroi)">
               Editar
             </ion-button>
           </ion-row>

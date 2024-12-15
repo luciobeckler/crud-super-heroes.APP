@@ -1,3 +1,4 @@
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -6,12 +7,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { HttpClientModule } from '@angular/common/http';
 import { HeroiService } from 'src/app/services/heroi/heroi.service';
 import { SuperpoderService } from 'src/app/services/superpoder/superpoder.service';
 import { Heroi } from 'src/app/interfaces/Heroi';
 import { SuperPoderes } from 'src/app/interfaces/SuperPoderes';
+import { EditarHeroiModalComponent } from 'src/app/components/editar-heroi-modal/editar-heroi-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -48,7 +50,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private heroiService: HeroiService,
     private superPoderService: SuperpoderService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private modalController: ModalController
   ) {
     this.heroiForm = this.formBuilder.group({
       Nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -105,7 +108,37 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  updateHeroi() {}
+  async updateHeroi(heroi: Heroi) {
+    try {
+      debugger;
+      let superPoderesHeroi: SuperPoderes[] = [];
+
+      this.superPoderService
+        .getSuperPoderesHeroi(heroi.id)
+        .subscribe((superPoderes) => {
+          superPoderesHeroi = superPoderes;
+        });
+
+      const modal = await this.modalController.create({
+        component: EditarHeroiModalComponent,
+        componentProps: { heroi, superPoderesHeroi },
+      });
+
+      modal.onDidDismiss().then((res) => {
+        if (res.data) {
+          const index = this.herois.findIndex((l) => l.id === heroi.id);
+          if (index > -1) {
+            this.herois[index] = { id: heroi.id, ...res.data };
+          }
+        }
+        this.loadData();
+      });
+
+      return await modal.present();
+    } catch (error) {
+      console.error('Erro ao processar atualização do herói:', error);
+    }
+  }
 
   resetForm() {
     this.heroiForm.reset({

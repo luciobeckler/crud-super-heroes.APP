@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Livro</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="fechaModal()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="heroiForm">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Herói</ion-label>
+        <ion-input type="text" formControlName="NomeHeroi"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Nome</ion-label>
+        <ion-input type="text" formControlName="Nome"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Data de nascimento</ion-label>
+        <ion-input
+          [value]="heroi.dataNascimento | date"
+          type="date"
+          formControlName="dataLancamento"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Altura</ion-label>
+        <ion-input type="number" formControlName="Altura"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Peso</ion-label>
+        <ion-input type="number" formControlName="Peso"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Categoria</ion-label>
+        <ion-select formControlName="categoria">
+          <ion-select-option
+            *ngFor="let categoria of categorias"
+            [value]="categoria"
+          >
+            {{ categoria }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+    <ion-button
+      expand="full"
+      (click)="putLivro(livro)"
+      [disabled]="!editForm.valid"
+    >
+      Salvar
+    </ion-button>
+  </form>
+</ion-content>

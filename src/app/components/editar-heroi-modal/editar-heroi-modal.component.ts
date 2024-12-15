@@ -9,6 +9,8 @@ import { HeroiService } from 'src/app/services/heroi/heroi.service';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Heroi } from 'src/app/interfaces/Heroi';
 import { CommonModule } from '@angular/common';
+import { SuperPoderes } from 'src/app/interfaces/SuperPoderes';
+import { SuperpoderService } from 'src/app/services/superpoder/superpoder.service';
 
 @Component({
   selector: 'app-editar-heroi-modal',
@@ -19,31 +21,46 @@ import { CommonModule } from '@angular/common';
 })
 export class EditarHeroiModalComponent implements OnInit {
   @Input() heroi: any;
-  @Input() superPoderesHeroi: any[] = [];
+  superPoderes: SuperPoderes[] = [];
 
   heroiForm: FormGroup;
 
   constructor(
     private heroiService: HeroiService,
     private formBuilder: FormBuilder,
-    private modalControler: ModalController
+    private modalControler: ModalController,
+    private superPoderService: SuperpoderService
   ) {
     this.heroiForm = this.formBuilder.group({
-      Nome: ['', [Validators.required, Validators.minLength(3)]],
-      NomeHeroi: ['', [Validators.required, Validators.minLength(3)]],
-      DataNascimento: [null, [Validators.required]],
-      Altura: [0, [Validators.required]],
-      Peso: [0, [Validators.required]],
-      SuperPoderIds: [[], [Validators.required]],
+      nome: ['', [Validators.required, Validators.minLength(3)]],
+      nomeHeroi: ['', [Validators.required, Validators.minLength(3)]],
+      dataNascimento: [null, [Validators.required]],
+      altura: [0, [Validators.required]],
+      peso: [0, [Validators.required]],
+      superPoderIds: [[], [Validators.required]],
     });
   }
 
   ngOnInit() {
     if (this.heroi) {
-      this.heroiForm.patchValue(this.heroi);
-      console.log(this.heroi);
-      console.log(this.superPoderesHeroi);
+      this.heroiForm.patchValue({
+        nome: this.heroi.nome,
+        nomeHeroi: this.heroi.nomeHeroi,
+        dataNascimento: this.heroi.dataNascimento,
+        altura: this.heroi.altura,
+        peso: this.heroi.peso,
+        superPoderIds:
+          this.heroi.superPoderes?.map((sp: SuperPoderes) => sp.id) || [],
+      });
     }
+
+    this.loadSuperPoderes();
+  }
+
+  loadSuperPoderes() {
+    this.superPoderService.listarSuperpoderes().subscribe((superPoderes) => {
+      this.superPoderes = superPoderes;
+    });
   }
 
   fechaModal(save = false) {
@@ -54,18 +71,20 @@ export class EditarHeroiModalComponent implements OnInit {
     }
   }
 
-  putLivro(heroi: Heroi) {
+  salvarEdicaoHeroi(heroi: Heroi) {
     if (this.heroiForm.valid) {
-      var heroiData: Heroi = this.heroiForm.value;
-      heroiData.id = heroi.id;
+      const heroiData: Heroi = {
+        ...this.heroi,
+        ...this.heroiForm.value,
+      };
 
       this.heroiService.atualizarHeroi(heroi.id, heroiData).subscribe(
-        (updatedLivro) => {
-          this.modalControler.dismiss(updatedLivro);
-          alert('Heroi ' + heroi.nomeHeroi + ' atualizado com sucesso.');
+        (updateHeroi) => {
+          this.modalControler.dismiss(updateHeroi);
+          alert('Herói atualizado com sucesso.');
         },
         (error) => {
-          alert('Erro ao editar o livro' + heroi.nomeHeroi);
+          alert('Erro ao editar o herói.');
         }
       );
     } else {

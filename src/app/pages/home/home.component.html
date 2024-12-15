@@ -39,12 +39,13 @@
           <ion-input type="number" formControlName="Peso"></ion-input>
         </ion-item>
 
+        <!-- Alterando para permitir múltiplos superpoderes -->
         <ion-item>
           <ion-label position="stacked">Super-poderes</ion-label>
-          <ion-select formControlName="SuperPoderIds">
+          <ion-select formControlName="SuperPoderes" multiple="true">
             <ion-select-option
               *ngFor="let superPoder of superPoderes"
-              [value]="superPoder.id"
+              [value]="superPoder"
             >
               {{ superPoder.superPoder }}
             </ion-select-option>
@@ -58,52 +59,48 @@
         [disabled]="!heroiForm.valid"
         color="success"
       >
-        Adicionar Livro
+        Adicionar Herói
       </ion-button>
     </form>
   </div>
 
-  <ion-content>
-    <div class="ion-padding">
-      <h1 class="ion-padding-bottom ion-text-center">
-        Super heróis cadastrados
-      </h1>
+  <div class="ion-padding">
+    <h1 class="ion-padding-bottom ion-text-center">Super heróis cadastrados</h1>
 
-      <ion-list>
-        <ion-card *ngFor="let heroi of herois; let i = index">
-          <ion-card-header>
-            <ion-card-title>{{ heroi.nomeHeroi }}</ion-card-title>
-            <ion-card-subtitle>{{ heroi.nome }}</ion-card-subtitle>
-          </ion-card-header>
+    <ion-list>
+      <ion-card *ngFor="let heroi of herois; let i = index">
+        <ion-card-header>
+          <ion-card-title>{{ heroi.nomeHeroi }}</ion-card-title>
+          <ion-card-subtitle>{{ heroi.nome }}</ion-card-subtitle>
+        </ion-card-header>
 
-          <ion-card-content>
-            <p>
-              <strong>Data de Nascimento:</strong>
-              {{ heroi.dataNascimento | date : "dd/MM/yyyy" }}
-            </p>
-            <p><strong>Altura:</strong> {{ heroi.altura }}m</p>
-            <p><strong>Peso:</strong> {{ heroi.peso }}kg</p>
-          </ion-card-content>
+        <ion-card-content>
+          <p>
+            <strong>Data de Nascimento:</strong>
+            {{ heroi.dataNascimento | date : "dd/MM/yyyy" }}
+          </p>
+          <p><strong>Altura:</strong> {{ heroi.altura }}m</p>
+          <p><strong>Peso:</strong> {{ heroi.peso }}kg</p>
+        </ion-card-content>
 
-          <ion-row class="ion-justify-content-between ion-padding">
-            <ion-button [id]="'present-alert-' + i" color="danger">
-              Excluir
-            </ion-button>
-            <ion-alert
-              [trigger]="'present-alert-' + i"
-              header="Confirmação"
-              message="Tem certeza que deseja excluir o heroi {{
-                heroi.nomeHeroi
-              }}?"
-              [buttons]="alertButtons"
-              (didDismiss)="setResult($event, heroi)"
-            ></ion-alert>
-            <ion-button color="warning" (click)="updateHeroi(heroi)">
-              Editar
-            </ion-button>
-          </ion-row>
-        </ion-card>
-      </ion-list>
-    </div>
-  </ion-content>
+        <ion-row class="ion-justify-content-between ion-padding">
+          <ion-button [id]="'present-alert-' + i" color="danger"
+            >Excluir</ion-button
+          >
+          <ion-alert
+            [trigger]="'present-alert-' + i"
+            header="Confirmação"
+            message="Tem certeza que deseja excluir o herói {{
+              heroi.nomeHeroi
+            }}?"
+            [buttons]="alertButtons"
+            (didDismiss)="setResult($event, heroi)"
+          ></ion-alert>
+          <ion-button color="warning" (click)="updateHeroi(heroi)"
+            >Editar</ion-button
+          >
+        </ion-row>
+      </ion-card>
+    </ion-list>
+  </div>
 </ion-content>

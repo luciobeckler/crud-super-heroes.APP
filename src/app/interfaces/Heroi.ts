@@ -1,3 +1,5 @@
+import { SuperPoderes } from './SuperPoderes';
+
 export interface Heroi {
   id: number;
   nome: string;
@@ -5,4 +7,6 @@ export interface Heroi {
   dataNascimento: Date;
   altura: number;
   peso: number;
+
+  superPoderes: SuperPoderes[];
 }

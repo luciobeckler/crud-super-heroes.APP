@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Editar Livro</ion-title>
+    <ion-title>Editar Heroi</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="fechaModal()">Cancelar</ion-button>
     </ion-buttons>
@@ -12,12 +12,12 @@
     <ion-list>
       <ion-item>
         <ion-label position="stacked">Herói</ion-label>
-        <ion-input type="text" formControlName="NomeHeroi"></ion-input>
+        <ion-input type="text" formControlName="nomeHeroi"></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="stacked">Nome</ion-label>
-        <ion-input type="text" formControlName="Nome"></ion-input>
+        <ion-input type="text" formControlName="nome"></ion-input>
       </ion-item>
 
       <ion-item>
@@ -25,36 +25,36 @@
         <ion-input
           [value]="heroi.dataNascimento | date"
           type="date"
-          formControlName="dataLancamento"
+          formControlName="dataNascimento"
         ></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="stacked">Altura</ion-label>
-        <ion-input type="number" formControlName="Altura"></ion-input>
+        <ion-input type="number" formControlName="altura"></ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="stacked">Peso</ion-label>
-        <ion-input type="number" formControlName="Peso"></ion-input>
+        <ion-input type="number" formControlName="peso"></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-label position="stacked">Categoria</ion-label>
-        <ion-select formControlName="categoria">
+        <ion-label position="stacked">Superpoderes</ion-label>
+        <ion-select formControlName="superPoderIds" multiple="true">
           <ion-select-option
-            *ngFor="let categoria of categorias"
-            [value]="categoria"
+            *ngFor="let superPoder of superPoderes"
+            [value]="superPoder.id"
           >
-            {{ categoria }}
+            {{ superPoder.superPoder }}
           </ion-select-option>
         </ion-select>
       </ion-item>
     </ion-list>
     <ion-button
       expand="full"
-      (click)="putLivro(livro)"
-      [disabled]="!editForm.valid"
+      (click)="salvarEdicaoHeroi(heroi)"
+      [disabled]="!heroiForm.valid"
     >
       Salvar
     </ion-button>

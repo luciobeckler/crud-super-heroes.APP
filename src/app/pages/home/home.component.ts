@@ -14,6 +14,7 @@ import { SuperpoderService } from 'src/app/services/superpoder/superpoder.servic
 import { Heroi } from 'src/app/interfaces/Heroi';
 import { SuperPoderes } from 'src/app/interfaces/SuperPoderes';
 import { EditarHeroiModalComponent } from 'src/app/components/editar-heroi-modal/editar-heroi-modal.component';
+import { HeroiPayload } from 'src/app/interfaces/HeroiPayload';
 
 @Component({
   selector: 'app-home',
@@ -59,7 +60,7 @@ export class HomeComponent implements OnInit {
       DataNascimento: [null, [Validators.required]],
       Altura: [0, [Validators.required]],
       Peso: [0, [Validators.required]],
-      SuperPoderIds: [[], [Validators.required]],
+      SuperPoderes: [{}, [Validators.required]],
     });
   }
 
@@ -75,6 +76,7 @@ export class HomeComponent implements OnInit {
   loadHerois() {
     this.heroiService.listarHerois().subscribe((herois) => {
       this.herois = herois;
+      console.log(herois);
     });
   }
 
@@ -86,14 +88,22 @@ export class HomeComponent implements OnInit {
 
   submitForm() {
     if (this.heroiForm.valid) {
-      const payload = {
+      debugger;
+      const idSuperPoderes: number[] = [];
+      this.heroiForm.value.SuperPoderes.forEach((element: SuperPoderes) => {
+        idSuperPoderes.push(element.id);
+      });
+
+      const payload: HeroiPayload = {
         nome: this.heroiForm.value.Nome,
         nomeHeroi: this.heroiForm.value.NomeHeroi,
         dataNascimento: this.heroiForm.value.DataNascimento,
         altura: this.heroiForm.value.Altura,
         peso: this.heroiForm.value.Peso,
-        superPoderIds: [this.heroiForm.value.SuperPoderIds],
+        superPoderIds: idSuperPoderes,
       };
+
+      console.log(payload);
 
       this.heroiService.criarHeroi(payload).subscribe((novoHeroi) => {
         this.herois.push(novoHeroi);
@@ -109,35 +119,22 @@ export class HomeComponent implements OnInit {
   }
 
   async updateHeroi(heroi: Heroi) {
-    try {
-      debugger;
-      let superPoderesHeroi: SuperPoderes[] = [];
+    const modal = await this.modalController.create({
+      component: EditarHeroiModalComponent,
+      componentProps: { heroi },
+    });
 
-      this.superPoderService
-        .getSuperPoderesHeroi(heroi.id)
-        .subscribe((superPoderes) => {
-          superPoderesHeroi = superPoderes;
-        });
-
-      const modal = await this.modalController.create({
-        component: EditarHeroiModalComponent,
-        componentProps: { heroi, superPoderesHeroi },
-      });
-
-      modal.onDidDismiss().then((res) => {
-        if (res.data) {
-          const index = this.herois.findIndex((l) => l.id === heroi.id);
-          if (index > -1) {
-            this.herois[index] = { id: heroi.id, ...res.data };
-          }
+    modal.onDidDismiss().then((res) => {
+      if (res.data) {
+        const index = this.herois.findIndex((l) => l.id === heroi.id);
+        if (index > -1) {
+          this.herois[index] = { id: heroi.id, ...res.data };
         }
-        this.loadData();
-      });
+      }
+      this.loadData();
+    });
 
-      return await modal.present();
-    } catch (error) {
-      console.error('Erro ao processar atualização do herói:', error);
-    }
+    return await modal.present();
   }
 
   resetForm() {
@@ -147,7 +144,7 @@ export class HomeComponent implements OnInit {
       DataNascimento: null,
       Altura: 0,
       Peso: 0,
-      SuperPoderIds: [],
+      SuperPoderIds: this.superPoderes,
     });
   }
 }
